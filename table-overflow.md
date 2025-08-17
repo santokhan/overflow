@@ -38,3 +38,51 @@ Keep your table wrapped like this so only it scrolls:
 ```
 
 > Summary: **`min-w-0` on the content flex item** stops the page from growing wider than the viewport. The `overflow-x-auto` on the table wrapper then works as intended, so **only the table** scrolls horizontally.
+
+Ah, this is a subtle but important Tailwind (and CSS) trick. Here’s the full explanation:
+
+---
+
+### Problem without `min-w-0`
+
+When you have a **flex container**:
+
+```html
+<div class="flex">
+  <aside class="shrink-0 w-72">Sidebar</aside>
+  <div class="grow">Main content</div>
+</div>
+```
+
+The main content has `flex-grow: 1` by default. But **flex items also have a minimum width**, which is usually the width of their content (`min-width: auto`).
+
+* If the content (like a wide table) is **larger than the remaining space**, the flex item refuses to shrink smaller than that content.
+* Result: **the whole page overflows**, because the content “forces” the flex item to be wider than the viewport.
+
+---
+
+### Role of `min-w-0`
+
+`min-w-0` in Tailwind sets:
+
+```css
+min-width: 0;
+```
+
+This **allows the flex item to shrink below the width of its content**.
+
+* Now the parent can constrain it.
+* Any overflowing content inside (like your table) can scroll horizontally with `overflow-x-auto`.
+* Without `min-w-0`, the table can’t trigger its scroll properly because the container itself refuses to shrink.
+
+---
+
+### TL;DR
+
+* `min-w-0` → lets the flex item shrink.
+* `overflow-x-auto` on the table wrapper → lets only the table scroll.
+* Together → page doesn’t overflow, table scrolls inside its container.
+
+---
+
+If you want, I can **draw a quick diagram showing why `min-w-0` fixes this**, it makes it super clear. Do you want me to do that?
